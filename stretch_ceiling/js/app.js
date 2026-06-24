@@ -2,12 +2,14 @@
   const storeKey = "stretchCeilingSiteData";
   const langKey = "stretchCeilingLang";
   const defaults = window.ceilingDefaults;
+  let serverData = null;
 
   function clone(value) {
     return JSON.parse(JSON.stringify(value));
   }
 
   function loadData() {
+    if (serverData) return clone(serverData);
     const saved = localStorage.getItem(storeKey);
     if (!saved) return clone(defaults);
     try {
@@ -40,7 +42,34 @@
   }
 
   function saveData(data) {
+    const next = clone(data);
+    migrateImages(next);
+    serverData = next;
     localStorage.setItem(storeKey, JSON.stringify(data));
+    return fetch(apiUrl("site-content"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content: next })
+    }).catch((error) => {
+      console.warn("Site content was saved locally only.", error);
+      return { ok: false };
+    });
+  }
+
+  function loadServerData() {
+    return fetch(apiUrl("site-content"))
+      .then((response) => {
+        if (!response.ok) throw new Error("Content API unavailable");
+        return response.json();
+      })
+      .then((result) => {
+        if (!result.content) return;
+        const next = Object.assign(clone(defaults), result.content);
+        migrateImages(next);
+        serverData = next;
+        localStorage.setItem(storeKey, JSON.stringify(next));
+      })
+      .catch(() => {});
   }
 
   function lang() {
@@ -321,6 +350,17 @@
     window.setTimeout(() => node.classList.remove("show"), 3200);
   }
 
+  function apiUrl(name) {
+    const local = ["localhost", "127.0.0.1", ""].includes(window.location.hostname);
+    if (local) {
+      return {
+        "submit-lead": "/api/leads",
+        "site-content": "/api/site-content"
+      }[name];
+    }
+    return `/.netlify/functions/${name}`;
+  }
+
   document.addEventListener("click", (event) => {
     const langButton = event.target.closest("[data-lang]");
     if (langButton) setLang(langButton.dataset.lang);
@@ -339,7 +379,7 @@
       message: form.message.value
     };
 
-    fetch("/api/leads", {
+    fetch(apiUrl("submit-lead"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(lead)
@@ -360,5 +400,8 @@
 
   window.ceilingApp = { loadData, saveData, render, storeKey, lang, t };
   document.documentElement.lang = lang() === "uk" ? "uk" : "ru";
-  document.addEventListener("DOMContentLoaded", render);
+  document.addEventListener("DOMContentLoaded", () => {
+    render();
+    loadServerData().then(render);
+  });
 })();

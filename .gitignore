@@ -1,0 +1,40 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+.venv/
+venv/
+env/
+
+# Node / Netlify Functions
+node_modules/
+package-lock.json
+
+# Local database and uploaded runtime data
+stretch_ceiling/data/*.db
+stretch_ceiling/data/*.db-*
+stretch_ceiling/data/*.sqlite
+stretch_ceiling/data/*.sqlite3
+stretch_ceiling/data/site_content.json
+
+# IDE and OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+.cache/
+
+# Netlify local files
+.netlify/

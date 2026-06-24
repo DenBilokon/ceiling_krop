@@ -4,7 +4,7 @@
   }
 
   function save(next) {
-    window.ceilingApp.saveData(next);
+    window.ceilingApp.saveData(next).catch(() => {});
     window.ceilingApp.render();
     toast("Зміни збережено");
   }
@@ -16,12 +16,43 @@
     window.setTimeout(() => node.classList.remove("show"), 2600);
   }
 
+  function apiUrl(name, query = "") {
+    if (isLocal()) {
+      const map = {
+        "admin-login": "/api/login",
+        "admin-logout": "/api/logout",
+        "admin-session": "/api/session",
+        "admin-leads": "/api/leads",
+        "upload-image": null
+      };
+      return `${map[name]}${query}`;
+    }
+    const suffix = query ? `?${query.replace(/^\?/, "")}` : "";
+    const map = {
+      "admin-session": "admin-login",
+      "admin-login": "admin-login",
+      "admin-logout": "admin-login",
+      "admin-leads": "admin-leads",
+      "upload-image": "upload-image"
+    };
+    return `/.netlify/functions/${map[name]}${suffix}`;
+  }
+
+  function isLocal() {
+    return ["localhost", "127.0.0.1", ""].includes(window.location.hostname);
+  }
+
+  function deleteLeadUrl(id) {
+    if (isLocal()) return `/api/leads/${encodeURIComponent(id)}`;
+    return apiUrl("admin-leads", `id=${encodeURIComponent(id)}`);
+  }
+
   async function requireAuth() {
     const login = document.querySelector("[data-admin-login]");
     const app = document.querySelector("[data-admin-app]");
     let isAuthed = false;
     try {
-      const response = await fetch("/api/session");
+      const response = await fetch(apiUrl("admin-session"));
       const result = await response.json();
       isAuthed = Boolean(result.authenticated);
     } catch (error) {
@@ -195,7 +226,7 @@
       <div class="admin-list"><p>Завантаження заявок...</p></div>
     `;
 
-    fetch("/api/leads")
+    fetch(apiUrl("admin-leads"))
       .then((response) => {
         if (!response.ok) throw new Error("Unauthorized");
         return response.json();
@@ -235,11 +266,30 @@
     });
   }
 
+  async function uploadImage(file) {
+    if (!file) return null;
+    const dataUrl = await fileToDataUrl(file);
+    if (isLocal()) return dataUrl;
+
+    const response = await fetch(apiUrl("upload-image"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        fileName: file.name,
+        contentType: file.type || "application/octet-stream",
+        data: dataUrl
+      })
+    });
+    if (!response.ok) throw new Error("Image upload failed");
+    const result = await response.json();
+    return result.url;
+  }
+
   document.addEventListener("submit", async (event) => {
     const login = event.target.closest("[data-admin-login] form");
     if (login) {
       event.preventDefault();
-      const response = await fetch("/api/login", {
+      const response = await fetch(apiUrl("admin-login"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password: login.password.value })
@@ -291,7 +341,7 @@
       item.ru.title = serviceForm.serviceTitleRu.value;
       item.uk.text = serviceForm.serviceTextUk.value;
       item.ru.text = serviceForm.serviceTextRu.value;
-      const image = await fileToDataUrl(serviceForm.image.files[0]);
+      const image = await uploadImage(serviceForm.image.files[0]);
       if (image) {
         item.image = image;
         item.imageName = serviceForm.image.files[0].name;
@@ -305,7 +355,7 @@
     if (workAdd) {
       event.preventDefault();
       const next = data();
-      const image = await fileToDataUrl(workAdd.image.files[0]);
+      const image = await uploadImage(workAdd.image.files[0]);
       next.works.unshift({
         id: `work-${Date.now()}`,
         image: image || "assets/photos/matte-living.jpg",
@@ -327,7 +377,7 @@
       item.ru.title = workForm.workTitleRu.value;
       item.uk.meta = workForm.workTextUk.value;
       item.ru.meta = workForm.workTextRu.value;
-      const image = await fileToDataUrl(workForm.image.files[0]);
+      const image = await uploadImage(workForm.image.files[0]);
       if (image) {
         item.image = image;
         item.imageName = workForm.image.files[0].name;
@@ -369,12 +419,12 @@
 
     const logout = event.target.closest("[data-admin-logout]");
     if (logout) {
-      fetch("/api/logout", { method: "POST" }).finally(() => requireAuth());
+      fetch(apiUrl("admin-logout"), { method: isLocal() ? "POST" : "DELETE" }).finally(() => requireAuth());
     }
 
     const deleteLead = event.target.closest("[data-delete-lead]");
     if (deleteLead) {
-      fetch(`/api/leads/${deleteLead.dataset.deleteLead}`, { method: "DELETE" })
+      fetch(deleteLeadUrl(deleteLead.dataset.deleteLead), { method: "DELETE" })
         .then(() => renderLeads());
     }
 

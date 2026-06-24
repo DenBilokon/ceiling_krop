@@ -8,15 +8,35 @@ import sqlite3
 import webbrowser
 
 
+def load_env_file():
+    base_dir = Path(__file__).resolve().parent
+    candidates = [base_dir / ".env", base_dir.parent / ".env"]
+    for env_file in candidates:
+        if not env_file.exists():
+            continue
+        for line in env_file.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+
+
+load_env_file()
+
 HOST = os.environ.get("HOST", "0.0.0.0")
 PORT = int(os.environ.get("PORT", "8000"))
-ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin123")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", None)
 SESSION_COOKIE = "stretch_admin_session"
 SESSIONS = set()
 
 
 def db_path():
     return Path(__file__).resolve().parent / "data" / "leads.db"
+
+
+def site_content_path():
+    return Path(__file__).resolve().parent / "data" / "site_content.json"
 
 
 def init_db():
@@ -46,6 +66,13 @@ def json_response(handler, payload, status=200):
 
 
 class SiteHandler(SimpleHTTPRequestHandler):
+    def end_headers(self):
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("X-Frame-Options", "DENY")
+        self.send_header("Referrer-Policy", "strict-origin-when-cross-origin")
+        self.send_header("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+        super().end_headers()
+
     def read_json(self):
         length = int(self.headers.get("Content-Length", "0"))
         if length == 0:
@@ -72,6 +99,18 @@ class SiteHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/api/session":
             json_response(self, {"ok": True, "authenticated": self.is_admin()})
+            return
+
+        if self.path == "/api/site-content":
+            path = site_content_path()
+            if not path.exists():
+                json_response(self, {"ok": True, "content": None})
+                return
+            try:
+                content = json.loads(path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError:
+                content = None
+            json_response(self, {"ok": True, "content": content})
             return
 
         if self.path == "/api/leads":
@@ -129,6 +168,20 @@ class SiteHandler(SimpleHTTPRequestHandler):
                     "INSERT INTO leads (name, phone, message) VALUES (?, ?, ?)",
                     (name, phone, message),
                 )
+            json_response(self, {"ok": True})
+            return
+
+        if self.path == "/api/site-content":
+            if not self.require_admin():
+                return
+            payload = self.read_json()
+            content = payload.get("content")
+            if not isinstance(content, dict):
+                json_response(self, {"ok": False, "error": "Content must be an object"}, 400)
+                return
+            path = site_content_path()
+            path.parent.mkdir(exist_ok=True)
+            path.write_text(json.dumps(content, ensure_ascii=False, indent=2), encoding="utf-8")
             json_response(self, {"ok": True})
             return
 
