@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 675" role="img" aria-label="White matte stretch ceiling">
+  <rect width="900" height="675" fill="#111"/>
+  <polygon points="0,90 900,0 900,675 0,675" fill="#e8e8e8"/>
+  <polygon points="70,74 830,40 780,220 130,240" fill="#fff"/>
+  <path d="M130 240 L780 220" stroke="#101010" stroke-width="14"/>
+  <circle cx="230" cy="150" r="20" fill="#111"/>
+  <circle cx="450" cy="140" r="20" fill="#111"/>
+  <circle cx="670" cy="130" r="20" fill="#111"/>
+  <rect x="85" y="360" width="250" height="170" fill="#f7f7f7" stroke="#111" stroke-width="8"/>
+  <rect x="555" y="340" width="235" height="190" fill="#fafafa" stroke="#111" stroke-width="8"/>
+  <path d="M0 560 H900 V675 H0 Z" fill="#1b1b1b"/>
+</svg>

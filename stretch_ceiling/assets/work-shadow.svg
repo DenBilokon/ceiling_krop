@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 675" role="img" aria-label="Shadow profile stretch ceiling">
+  <rect width="900" height="675" fill="#f7f7f7"/>
+  <polygon points="0,115 900,40 900,675 0,675" fill="#dcdcdc"/>
+  <polygon points="84,88 816,62 760,250 142,260" fill="#fbfbfb"/>
+  <path d="M142 260 L760 250" stroke="#070707" stroke-width="20"/>
+  <path d="M170 250 L735 240" stroke="#fff" stroke-width="6"/>
+  <path d="M120 430 H780" stroke="#111" stroke-width="8"/>
+  <path d="M190 480 H710" stroke="#111" stroke-width="4" opacity="0.5"/>
+  <rect x="120" y="515" width="660" height="90" fill="#fff"/>
+  <path d="M0 600 H900 V675 H0 Z" fill="#111"/>
+</svg>

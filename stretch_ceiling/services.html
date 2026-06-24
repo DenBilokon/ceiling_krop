@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Послуги | Натяжні стелі KROP</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script defer src="js/data.js"></script>
+  <script defer src="js/app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <a class="brand" href="index.html"><span class="brand__name">Ceiling KROP</span><span class="brand__tag" data-i18n="brandTag">Кропивницький</span></a>
+      <nav class="nav" aria-label="Main navigation">
+        <a href="index.html" data-i18n="navHome">Головна</a><a href="services.html" aria-current="page" data-i18n="navServices">Послуги</a><a href="prices.html" data-i18n="navPrices">Ціни</a><a href="portfolio.html" data-i18n="navPortfolio">Роботи</a><a href="contacts.html" data-i18n="navContacts">Контакти</a>
+      </nav>
+      <div class="actions"><div class="lang"><button type="button" data-lang="uk">UA</button><button type="button" data-lang="ru">RU</button></div><a class="btn" href="contacts.html" data-i18n="call">Замовити замір</a><button class="icon-btn" type="button" data-nav-toggle aria-label="Menu">☰</button></div>
+    </div>
+  </header>
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <div class="eyebrow" data-i18n="navServices">Послуги</div>
+        <h1 data-i18n="servicesTitle">Послуги</h1>
+        <p class="lead" data-i18n="servicesLead">Базові рішення можна комбінувати.</p>
+      </div>
+    </section>
+    <section class="section">
+      <div class="container">
+        <div class="grid grid--4" data-render="services"></div>
+      </div>
+    </section>
+    <section class="section section--soft">
+      <div class="container">
+        <div class="section__head"><h2 data-i18n="stepsTitle">Як проходить замовлення</h2></div>
+        <div class="grid grid--4 steps" data-render="steps"></div>
+      </div>
+    </section>
+  </main>
+  <footer class="footer"><div class="container footer__inner"><span data-i18n="footer">Натяжні стелі KROP.</span></div></footer>
+  <div class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

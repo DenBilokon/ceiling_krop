@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 675" role="img" aria-label="Stretch ceiling with LED lines">
+  <defs>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="900" height="675" fill="#191919"/>
+  <polygon points="0,130 900,20 900,675 0,675" fill="#dadada"/>
+  <polygon points="70,80 840,40 790,310 120,330" fill="#343434"/>
+  <path d="M125 325 L790 304" stroke="#fff" stroke-width="8" filter="url(#glow)"/>
+  <path d="M210 100 L700 300" stroke="#fff" stroke-width="9" filter="url(#glow)"/>
+  <path d="M550 55 L300 320" stroke="#fff" stroke-width="9" filter="url(#glow)"/>
+  <path d="M105 250 L420 165" stroke="#fff" stroke-width="7" filter="url(#glow)"/>
+  <rect x="94" y="415" width="205" height="145" fill="#efefef" stroke="#111" stroke-width="8"/>
+  <rect x="600" y="390" width="220" height="170" fill="#f7f7f7" stroke="#111" stroke-width="8"/>
+  <path d="M0 585 H900 V675 H0 Z" fill="#111"/>
+</svg>

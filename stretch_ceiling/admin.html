@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Адмін | Натяжні стелі KROP</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script defer src="js/data.js"></script>
+  <script defer src="js/app.js"></script>
+  <script defer src="js/admin.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <a class="brand" href="index.html"><span class="brand__name">Ceiling KROP</span><span class="brand__tag">Admin</span></a>
+      <nav class="nav" aria-label="Main navigation"><a href="index.html" data-i18n="navHome">Головна</a><a href="services.html" data-i18n="navServices">Послуги</a><a href="prices.html" data-i18n="navPrices">Ціни</a><a href="portfolio.html" data-i18n="navPortfolio">Роботи</a><a href="contacts.html" data-i18n="navContacts">Контакти</a></nav>
+      <div class="actions"><div class="lang"><button type="button" data-lang="uk">UA</button><button type="button" data-lang="ru">RU</button></div><button class="icon-btn" type="button" data-nav-toggle aria-label="Menu">☰</button></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section" data-admin-login>
+      <div class="container">
+        <div class="section__head">
+          <h1>Вхід адміністратора</h1>
+          <p>Звичайні користувачі не мають кабінету. Пароль для прототипу: <strong>admin123</strong>.</p>
+        </div>
+        <form class="form" style="max-width:420px">
+          <div class="field"><label>Пароль</label><input name="password" type="password" required></div>
+          <button class="btn" type="submit">Увійти</button>
+        </form>
+      </div>
+    </section>
+
+    <section data-admin-app hidden>
+      <div class="admin-layout">
+        <aside class="admin-side">
+          <button class="btn btn--ghost" type="button" data-admin-tab="contact">Контакти</button>
+          <button class="btn btn--ghost" type="button" data-admin-tab="prices">Ціни</button>
+          <button class="btn btn--ghost" type="button" data-admin-tab="services">Послуги</button>
+          <button class="btn btn--ghost" type="button" data-admin-tab="works">Роботи</button>
+          <button class="btn btn--ghost" type="button" data-admin-tab="reviews">Відгуки</button>
+          <button class="btn btn--ghost" type="button" data-admin-tab="leads">Заявки</button>
+          <button class="btn" type="button" data-admin-logout>Вийти</button>
+        </aside>
+        <div class="admin-main">
+          <section class="admin-panel active" data-admin-panel="contact"></section>
+          <section class="admin-panel" data-admin-panel="prices"></section>
+          <section class="admin-panel" data-admin-panel="services"></section>
+          <section class="admin-panel" data-admin-panel="works"></section>
+          <section class="admin-panel" data-admin-panel="reviews"></section>
+          <section class="admin-panel" data-admin-panel="leads"></section>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

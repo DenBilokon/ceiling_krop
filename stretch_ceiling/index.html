@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Натяжні стелі KROP</title>
+  <meta name="description" content="Монтаж, демонтаж і ремонт натяжних стель у Кропивницькому та області.">
+  <link rel="stylesheet" href="css/styles.css">
+  <script defer src="js/data.js"></script>
+  <script defer src="js/app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <a class="brand" href="index.html">
+        <span class="brand__name">Ceiling KROP</span>
+        <span class="brand__tag" data-i18n="brandTag">Кропивницький</span>
+      </a>
+      <nav class="nav" aria-label="Main navigation">
+        <a href="index.html" aria-current="page" data-i18n="navHome">Головна</a>
+        <a href="services.html" data-i18n="navServices">Послуги</a>
+        <a href="prices.html" data-i18n="navPrices">Ціни</a>
+        <a href="portfolio.html" data-i18n="navPortfolio">Роботи</a>
+        <a href="contacts.html" data-i18n="navContacts">Контакти</a>
+      </nav>
+      <div class="actions">
+        <div class="lang" aria-label="Language">
+          <button type="button" data-lang="uk">UA</button>
+          <button type="button" data-lang="ru">RU</button>
+        </div>
+        <a class="btn" href="contacts.html" data-i18n="call">Замовити замір</a>
+        <button class="icon-btn" type="button" data-nav-toggle aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero__grid">
+        <div>
+          <div class="eyebrow" data-i18n="heroEyebrow">Монтаж і демонтаж натяжних стель</div>
+          <h1 data-i18n="heroTitle">Натяжні стелі без зайвого шуму в ремонті</h1>
+          <p class="lead" data-i18n="heroLead">Рівні матові, тіньові та світлові стелі для квартир, будинків і комерційних приміщень.</p>
+          <div class="hero__actions">
+            <a class="btn" href="contacts.html" data-i18n="call">Замовити замір</a>
+            <a class="btn btn--ghost" href="portfolio.html" data-i18n="portfolio">Переглянути роботи</a>
+          </div>
+          <div class="hero__facts">
+            <div class="fact"><strong data-i18n="fact1">1 день</strong><span data-i18n="fact1Text">монтаж типової кімнати</span></div>
+            <div class="fact"><strong data-i18n="fact2">4 см</strong><span data-i18n="fact2Text">середня втрата висоти</span></div>
+            <div class="fact"><strong data-i18n="fact3">0 мокрих робіт</strong><span data-i18n="fact3Text">чистіший ремонт</span></div>
+          </div>
+        </div>
+        <figure class="hero-media">
+          <img data-hero-image src="assets/hero-ceiling.svg" alt="Modern stretch ceiling">
+          <figcaption class="hero-media__label">
+            <span data-contact="city">Кропивницький та область</span>
+            <a data-contact="phone" href="tel:+380000000000">+38 (000) 000-00-00</a>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section__head">
+          <h2 data-i18n="benefitsTitle">Що важливо в роботі</h2>
+          <p data-i18n="benefitsLead">Сайт побудований навколо практичних причин, через які клієнти обирають натяжні стелі.</p>
+        </div>
+        <div class="grid grid--4" data-render="benefits"></div>
+      </div>
+    </section>
+
+    <section class="section section--soft">
+      <div class="container">
+        <div class="section__head">
+          <h2 data-i18n="servicesTitle">Послуги</h2>
+          <p data-i18n="servicesLead">Базові рішення можна комбінувати.</p>
+        </div>
+        <div class="grid grid--4" data-render="services"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section__head">
+          <h2 data-i18n="pricesTitle">Орієнтовні ціни</h2>
+          <p data-i18n="pricesLead">Фінальний кошторис формується після заміру.</p>
+        </div>
+        <div data-render="prices"></div>
+      </div>
+    </section>
+
+    <section class="section section--soft">
+      <div class="container">
+        <div class="section__head">
+          <h2 data-i18n="stepsTitle">Як проходить замовлення</h2>
+        </div>
+        <div class="grid grid--4 steps" data-render="steps"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section__head">
+          <h2 data-i18n="worksTitle">Приклади робіт</h2>
+          <p data-i18n="worksLead">Перші зображення тимчасові.</p>
+        </div>
+        <div class="grid grid--3" data-render="works"></div>
+      </div>
+    </section>
+
+    <section class="section section--soft">
+      <div class="container">
+        <div class="section__head">
+          <h2 data-i18n="reviewsTitle">Відгуки</h2>
+        </div>
+        <div class="grid grid--3" data-render="reviews"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container faq">
+        <div class="section__head">
+          <h2 data-i18n="faqTitle">Питання</h2>
+        </div>
+        <div data-render="faq"></div>
+      </div>
+    </section>
+
+    <section class="contact-band">
+      <div class="container contact-grid">
+        <div>
+          <h2 data-i18n="contactsTitle">Почнемо з безкоштовної консультації</h2>
+          <p class="lead" data-i18n="contactsLead">Напишіть або залиште заявку.</p>
+          <div class="contact-list">
+            <a data-contact="phone" href="tel:+380000000000">+38 (000) 000-00-00</a>
+            <a data-contact="facebook" href="https://www.facebook.com/Natyazhnyepotolki.krop">Facebook</a>
+            <span data-contact="city">Кропивницький та область</span>
+          </div>
+        </div>
+        <form class="form" data-lead-form>
+          <div class="field"><label data-i18n="name">Ім'я</label><input name="name" required></div>
+          <div class="field"><label data-i18n="phone">Телефон</label><input name="phone" required></div>
+          <div class="field"><label data-i18n="message">Що потрібно зробити</label><textarea name="message"></textarea></div>
+          <button class="btn btn--wide" type="submit" data-i18n="send">Надіслати заявку</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <span data-i18n="footer">Натяжні стелі KROP. Монтаж, демонтаж, ремонт.</span>
+    </div>
+  </footer>
+  <div class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
