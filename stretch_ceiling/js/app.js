@@ -8,12 +8,38 @@
     return JSON.parse(JSON.stringify(value));
   }
 
+  function mergeById(defaultList, savedList) {
+    if (!Array.isArray(defaultList)) return savedList;
+    if (!Array.isArray(savedList)) return clone(defaultList);
+    const savedById = new Map(savedList.map((item) => [item.id, item]));
+    const merged = defaultList.map((item) => {
+      const saved = savedById.get(item.id);
+      if (!saved) return item;
+      return Object.assign({}, item, saved, {
+        uk: Object.assign({}, item.uk, saved.uk),
+        ru: Object.assign({}, item.ru, saved.ru)
+      });
+    });
+    const defaultIds = new Set(defaultList.map((item) => item.id));
+    savedList.forEach((item) => {
+      if (!defaultIds.has(item.id)) merged.push(item);
+    });
+    return merged;
+  }
+
+  function mergeContent(base, saved) {
+    const next = Object.assign(clone(base), saved);
+    next.services = mergeById(base.services, saved.services);
+    next.prices = mergeById(base.prices, saved.prices);
+    return next;
+  }
+
   function loadData() {
     if (serverData) return clone(serverData);
     const saved = localStorage.getItem(storeKey);
     if (!saved) return clone(defaults);
     try {
-      const data = Object.assign(clone(defaults), JSON.parse(saved));
+      const data = mergeContent(defaults, JSON.parse(saved));
       migrateImages(data);
       return data;
     } catch (error) {
@@ -64,7 +90,7 @@
       })
       .then((result) => {
         if (!result.content) return;
-        const next = Object.assign(clone(defaults), result.content);
+        const next = mergeContent(defaults, result.content);
         migrateImages(next);
         serverData = next;
         localStorage.setItem(storeKey, JSON.stringify(next));
