@@ -183,7 +183,6 @@ select {
 .hero__grid {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(360px, 1.1fr);
-  gap: 42px;
   align-items: center;
 }
 
@@ -203,7 +202,7 @@ p {
 }
 
 h1 {
-  font-size: clamp(38px, 5.4vw, 68px);
+  font-size: clamp(38px, 5.4vw, 55px);
   line-height: 0.98;
   letter-spacing: 0;
   margin-bottom: 22px;
@@ -469,7 +468,6 @@ h3 {
 .contact-grid {
   display: grid;
   grid-template-columns: 1fr 420px;
-  gap: 42px;
   align-items: start;
 }
 

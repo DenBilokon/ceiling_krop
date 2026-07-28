@@ -119,13 +119,25 @@
   function renderPrices() {
     const next = data();
     const node = document.querySelector("[data-admin-panel='prices']");
+    const minPrice = next.calculator?.minPrice ?? 5000;
     node.innerHTML = `
       <h2>Ціни</h2>
+      <form class="admin-item" data-calculator-form>
+        <h3>Калькулятор вартості</h3>
+        <div class="field">
+          <label>Мінімальна ціна за послугу, грн</label>
+          <input name="minPrice" type="number" min="0" step="50" value="${minPrice}">
+        </div>
+        <button class="btn" type="submit">Зберегти</button>
+      </form>
       <div class="admin-list">
         ${next.prices.map((price, index) => `
           <form class="admin-item" data-price-form="${index}">
             ${fields("price", price)}
-            <div class="field"><label>Ціна</label><input name="value" value="${price.value}"></div>
+            <div class="grid grid--2">
+              <div class="field"><label>Ціна (текст на сайті)</label><input name="value" value="${price.value}"></div>
+              <div class="field"><label>Ціна за м² для калькулятора, грн (0 — не показувати в калькуляторі)</label><input name="pricePerM2" type="number" min="0" step="10" value="${price.pricePerM2 ?? 0}"></div>
+            </div>
             <button class="btn" type="submit">Зберегти</button>
           </form>
         `).join("")}
@@ -318,6 +330,15 @@
       return;
     }
 
+    const calculatorForm = event.target.closest("[data-calculator-form]");
+    if (calculatorForm) {
+      event.preventDefault();
+      const next = data();
+      next.calculator = { ...(next.calculator || {}), minPrice: Number(calculatorForm.minPrice.value) || 0 };
+      save(next);
+      return;
+    }
+
     const priceForm = event.target.closest("[data-price-form]");
     if (priceForm) {
       event.preventDefault();
@@ -328,6 +349,7 @@
       item.uk.note = priceForm.priceTextUk.value;
       item.ru.note = priceForm.priceTextRu.value;
       item.value = priceForm.value.value;
+      item.pricePerM2 = Number(priceForm.pricePerM2.value) || 0;
       save(next);
       return;
     }

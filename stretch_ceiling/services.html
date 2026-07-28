@@ -16,7 +16,7 @@
       <nav class="nav" aria-label="Main navigation">
         <a href="index.html" data-i18n="navHome">Головна</a><a href="services.html" aria-current="page" data-i18n="navServices">Послуги</a><a href="prices.html" data-i18n="navPrices">Ціни</a><a href="portfolio.html" data-i18n="navPortfolio">Роботи</a><a href="contacts.html" data-i18n="navContacts">Контакти</a>
       </nav>
-      <div class="actions"><div class="lang"><button type="button" data-lang="uk">UA</button><button type="button" data-lang="ru">RU</button></div><a class="btn" href="contacts.html" data-i18n="call">Замовити замір</a><button class="icon-btn" type="button" data-nav-toggle aria-label="Menu">☰</button></div>
+      <div class="actions"><a class="topbar__phone" data-contact="phone-primary" href="tel:+380000000000" aria-label="Зателефонувати"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span data-contact-text>+38 (000) 000-00-00</span></a><div class="lang"><button type="button" data-lang="uk">UA</button><button type="button" data-lang="ru">RU</button></div><a class="btn" href="contacts.html" data-i18n="call">Замовити замір</a><button class="icon-btn" type="button" data-nav-toggle aria-label="Menu">☰</button></div>
     </div>
   </header>
   <main>
@@ -29,7 +29,11 @@
     </section>
     <section class="section">
       <div class="container">
-        <div class="grid grid--4" data-render="services"></div>
+        <div class="carousel">
+          <button class="carousel__nav carousel__nav--prev" type="button" data-carousel-prev aria-label="Попередні послуги">‹</button>
+          <div class="carousel__track" data-render="services"></div>
+          <button class="carousel__nav carousel__nav--next" type="button" data-carousel-next aria-label="Наступні послуги">›</button>
+        </div>
       </div>
     </section>
     <section class="section section--soft">

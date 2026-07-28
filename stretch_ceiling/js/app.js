@@ -106,6 +106,14 @@
       servicesLead: "Базові рішення можна комбінувати: класична стеля, тіньовий профіль, світлові лінії, трекові системи та демонтаж.",
       pricesTitle: "Орієнтовні ціни",
       pricesLead: "Фінальний кошторис формується після заміру з урахуванням площі, профілю, освітлення та складності монтажу.",
+      calcEyebrow: "Онлайн-розрахунок",
+      calcTitle: "Калькулятор вартості",
+      calcLead: "Оберіть тип роботи та вкажіть площу кімнати, щоб побачити орієнтовну вартість.",
+      calcTypeLabel: "Тип стелі",
+      calcAddonLabel: "Додатково",
+      calcAreaLabel: "Площа кімнати",
+      calcResultLabel: "Орієнтовна вартість",
+      calcResultNote: "Розрахунок орієнтовний. Мінімальна вартість послуги фіксована, точна ціна визначається після виїзду на замір.",
       worksTitle: "Приклади робіт",
       worksLead: "Добірка прикладів для натхнення: класичні, тіньові та світлові рішення для різних приміщень.",
       stepsTitle: "Як проходить замовлення",
@@ -144,6 +152,14 @@
       servicesLead: "Базовые решения можно комбинировать: классический потолок, теневой профиль, световые линии, трековые системы и демонтаж.",
       pricesTitle: "Ориентировочные цены",
       pricesLead: "Финальная смета формируется после замера с учетом площади, профиля, освещения и сложности монтажа.",
+      calcEyebrow: "Онлайн-расчет",
+      calcTitle: "Калькулятор стоимости",
+      calcLead: "Выберите тип работы и укажите площадь комнаты, чтобы увидеть ориентировочную стоимость.",
+      calcTypeLabel: "Тип потолка",
+      calcAddonLabel: "Дополнительно",
+      calcAreaLabel: "Площадь комнаты",
+      calcResultLabel: "Ориентировочная стоимость",
+      calcResultNote: "Расчет ориентировочный. Минимальная стоимость услуги фиксирована, точная цена определяется после выезда на замер.",
       worksTitle: "Примеры работ",
       worksLead: "Подборка примеров для вдохновения: классические, теневые и световые решения для разных помещений.",
       stepsTitle: "Как проходит заказ",
@@ -212,10 +228,34 @@
     });
   }
 
+  function setupInfiniteCarousel(track) {
+    requestAnimationFrame(() => {
+      const setWidth = track.scrollWidth / 3;
+      track.dataset.setWidth = setWidth;
+      track.scrollLeft = setWidth;
+    });
+
+    if (track.dataset.carouselBound) return;
+    track.dataset.carouselBound = "1";
+
+    let settleTimer = null;
+    track.addEventListener("scroll", () => {
+      clearTimeout(settleTimer);
+      settleTimer = setTimeout(() => {
+        const setWidth = Number(track.dataset.setWidth) || track.scrollWidth / 3;
+        if (track.scrollLeft < setWidth) {
+          track.scrollLeft += setWidth;
+        } else if (track.scrollLeft >= setWidth * 2) {
+          track.scrollLeft -= setWidth;
+        }
+      }, 120);
+    });
+  }
+
   function renderServices(data) {
     const target = document.querySelector("[data-render='services']");
     if (!target) return;
-    target.innerHTML = data.services.map((service) => `
+    const cardsHtml = data.services.map((service) => `
       <article class="card service-card">
         <div class="service-card__image"><img src="${service.image}" alt="${local(service, "title")}"></div>
         <div>
@@ -224,6 +264,8 @@
         </div>
       </article>
     `).join("");
+    target.innerHTML = cardsHtml + cardsHtml + cardsHtml;
+    setupInfiniteCarousel(target);
   }
 
   function renderPrices(data) {
@@ -238,6 +280,114 @@
         <strong>${price.value}</strong>
       </div>
     `).join("");
+  }
+
+  function formatMoney(value) {
+    return `${Math.round(value).toLocaleString("uk-UA")} грн`;
+  }
+
+  function computeCalculator() {
+    const wrap = document.querySelector("[data-calculator]");
+    if (!wrap) return;
+    const minPrice = Number(wrap.dataset.minPrice) || 0;
+    const areaInput = wrap.querySelector("[data-calc-area]");
+    const area = Number(areaInput?.value) || 0;
+
+    let rate = 0;
+    wrap.querySelectorAll("[data-calc-rate]").forEach((box) => {
+      box.closest(".calculator__option")?.classList.toggle("is-checked", box.checked);
+      if (box.checked) rate += Number(box.dataset.calcRate || 0);
+    });
+
+    const total = rate === 0 ? 0 : Math.max(minPrice, rate * area);
+    const resultNode = wrap.querySelector("[data-calc-result]");
+    if (resultNode && resultNode.textContent !== formatMoney(total)) {
+      resultNode.textContent = formatMoney(total);
+      resultNode.classList.remove("pulse");
+      void resultNode.offsetWidth;
+      resultNode.classList.add("pulse");
+    }
+
+    const areaValueNode = wrap.querySelector("[data-calc-area-value]");
+    if (areaValueNode) areaValueNode.textContent = area;
+
+    if (areaInput) {
+      const min = Number(areaInput.min) || 0;
+      const max = Number(areaInput.max) || 100;
+      const percent = ((area - min) / (max - min)) * 100;
+      areaInput.style.setProperty("--progress", `${percent}%`);
+    }
+  }
+
+  function renderCalculator(data) {
+    const target = document.querySelector("[data-render='calculator']");
+    if (!target) return;
+    const options = (data.prices || []).filter((price) => Number(price.pricePerM2) > 0);
+    if (!options.length) {
+      target.innerHTML = "";
+      return;
+    }
+    const typeOptions = options.filter((price) => !price.addon);
+    const addonOptions = options.filter((price) => price.addon);
+    const minPrice = Number(data.calculator?.minPrice) || 0;
+    const minArea = 5;
+    const maxArea = 150;
+    const defaultArea = 20;
+    target.innerHTML = `
+      <div class="calculator" data-calculator data-min-price="${minPrice}">
+        <div class="calculator__inner">
+          <div class="calculator__head">
+            <span class="eyebrow">${t("calcEyebrow")}</span>
+            <h3>${t("calcTitle")}</h3>
+            <p class="calculator__lead">${t("calcLead")}</p>
+          </div>
+          <div class="calculator__body">
+            <div class="calculator__field">
+              <span class="calculator__field-label">${t("calcTypeLabel")}</span>
+              <div class="calculator__options">
+                ${typeOptions.map((price, index) => `
+                  <label class="calculator__option${index === 0 ? " is-checked" : ""}">
+                    <input type="radio" name="calc-type" data-calc-rate="${price.pricePerM2}" ${index === 0 ? "checked" : ""}>
+                    <span class="calculator__option-check" aria-hidden="true"></span>
+                    <span class="calculator__option-text">${local(price, "title")}</span>
+                  </label>
+                `).join("")}
+              </div>
+            </div>
+            ${addonOptions.length ? `
+            <div class="calculator__field">
+              <span class="calculator__field-label">${t("calcAddonLabel")}</span>
+              <div class="calculator__options">
+                ${addonOptions.map((price) => `
+                  <label class="calculator__option">
+                    <input type="checkbox" data-calc-rate="${price.pricePerM2}">
+                    <span class="calculator__option-check" aria-hidden="true"></span>
+                    <span class="calculator__option-text">${local(price, "title")}</span>
+                  </label>
+                `).join("")}
+              </div>
+            </div>
+            ` : ""}
+            <div class="calculator__field">
+              <div class="calculator__area-head">
+                <span class="calculator__field-label">${t("calcAreaLabel")}</span>
+                <span class="calculator__area-value"><strong data-calc-area-value>${defaultArea}</strong> м²</span>
+              </div>
+              <input id="calc-area" type="range" min="${minArea}" max="${maxArea}" step="1" value="${defaultArea}" data-calc-area>
+              <div class="calculator__area-scale"><span>${minArea} м²</span><span>${maxArea} м²</span></div>
+            </div>
+          </div>
+          <div class="calculator__result">
+            <div>
+              <span class="calculator__result-label">${t("calcResultLabel")}</span>
+              <p class="calculator__note">${t("calcResultNote")}</p>
+            </div>
+            <strong data-calc-result>${formatMoney(minPrice)}</strong>
+          </div>
+        </div>
+      </div>
+    `;
+    computeCalculator();
   }
 
   function renderWorks(data) {
@@ -299,6 +449,19 @@
   }
 
   function renderContact(data) {
+    function firstPhone(value) {
+      return String(value || "").split(/[\/,]/)[0].trim();
+    }
+
+    function telHref(value) {
+      const digits = String(value || "").replace(/[^\d+]/g, "");
+      if (!digits) return "#";
+      if (digits.startsWith("+")) return `tel:${digits}`;
+      if (digits.startsWith("380")) return `tel:+${digits}`;
+      if (digits.startsWith("0")) return `tel:+38${digits}`;
+      return `tel:+${digits}`;
+    }
+
     function telegramUrl(value) {
       const raw = String(value || "").trim();
       if (!raw || raw === "#") return "#";
@@ -309,7 +472,13 @@
 
     document.querySelectorAll("[data-contact='phone']").forEach((node) => {
       node.textContent = data.contact.phone;
-      node.href = "tel:+380951940827";
+      node.href = telHref(firstPhone(data.contact.phone));
+    });
+    document.querySelectorAll("[data-contact='phone-primary']").forEach((node) => {
+      const primary = firstPhone(data.contact.phone);
+      node.href = telHref(primary);
+      const label = node.querySelector("[data-contact-text]");
+      if (label) label.textContent = primary;
     });
     document.querySelectorAll("[data-contact='facebook']").forEach((node) => {
       node.href = data.contact.facebook;
@@ -336,6 +505,7 @@
     renderBenefits();
     renderServices(data);
     renderPrices(data);
+    renderCalculator(data);
     renderWorks(data);
     renderReviews(data);
     renderFaq(data);
@@ -361,7 +531,45 @@
     return `/.netlify/functions/${name}`;
   }
 
+  document.addEventListener("input", (event) => {
+    if (event.target.closest("[data-calculator]")) computeCalculator();
+  });
+
+  document.addEventListener("change", (event) => {
+    if (event.target.closest("[data-calculator]")) computeCalculator();
+  });
+
   document.addEventListener("click", (event) => {
+    const option = event.target.closest(".calculator__option");
+    const input = option?.querySelector("input[data-calc-rate]");
+    if (input) {
+      event.preventDefault();
+      if (input.type === "radio") {
+        if (input.checked) {
+          input.checked = false;
+        } else {
+          option.parentElement.querySelectorAll(`input[name="${input.name}"]`).forEach((el) => {
+            el.checked = false;
+          });
+          input.checked = true;
+        }
+      } else {
+        input.checked = !input.checked;
+      }
+      computeCalculator();
+    }
+
+    const carouselNav = event.target.closest("[data-carousel-prev], [data-carousel-next]");
+    if (carouselNav) {
+      const track = carouselNav.closest(".carousel")?.querySelector(".carousel__track");
+      if (track) {
+        const card = track.firstElementChild;
+        const gap = 16;
+        const step = card ? card.getBoundingClientRect().width + gap : 280;
+        track.scrollBy({ left: carouselNav.hasAttribute("data-carousel-prev") ? -step : step, behavior: "smooth" });
+      }
+    }
+
     const langButton = event.target.closest("[data-lang]");
     if (langButton) setLang(langButton.dataset.lang);
 
